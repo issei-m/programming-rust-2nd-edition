@@ -74,13 +74,13 @@ fn render(pixels: &mut [u8], bounds: (usize, usize), upper_left: Complex<f64>, l
     }
 }
 
-fn write_image(filename: &str, pixels: &[u8], bounds: (usize, usize)) -> Result<(), std::io::Error> {
+fn write_image(filename: &str, pixels: &[u8], bounds: (usize, usize)) -> Result<(), image::ImageError> {
     use std::fs::File;
-    use image::png::PNGEncoder;
+    use image::codecs::png::PngEncoder;
+    use image::ImageEncoder;
 
     let output = File::create(filename)?;
-    let encoder = PNGEncoder::new(output);
-    encoder.encode(&pixels, bounds.0 as u32, bounds.1 as u32, image::ColorType::Gray(8))?;
+    PngEncoder::new(output).write_image(&pixels, bounds.0 as u32, bounds.1 as u32, image::ExtendedColorType::L8)?;
 
     Ok(())
 }
