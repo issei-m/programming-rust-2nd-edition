@@ -86,6 +86,8 @@ fn write_image(filename: &str, pixels: &[u8], bounds: (usize, usize)) -> Result<
 }
 
 fn main() {
+    use std::thread::available_parallelism;
+
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 5 {
         eprintln!("Usage: {} FILE DIMENSIONS UPPERLEFT LOWERRIGHT", args[0]);
@@ -99,7 +101,7 @@ fn main() {
 
     let mut pixels = vec![0; bounds.0 * bounds.1];
 
-    let threads = 8;
+    let threads = available_parallelism().unwrap().get(); // num of cores
     let rows_per_band = bounds.1 / threads + 1;
     {
         let bands: Vec<&mut [u8]> = pixels.chunks_mut(rows_per_band * bounds.0).collect();
